@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "types": ["node"],
+    "paths": {
+      "event-ops/*": ["./packages/core/*"]
+    }
+  }
+}

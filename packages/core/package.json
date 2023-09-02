@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "main": "build",
+  "scripts": {
+    "build": "node -r @esbuild-kit/cjs-loader scripts/build.ts"
+  }
+}
