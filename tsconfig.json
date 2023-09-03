@@ -7,5 +7,6 @@
       "event-ops/core/*": ["./core/src/*"],
       "event-ops/react/*": ["./react/src/*"]
     }
-  }
+  },
+  "exclude": ["**/build/**"]
 }

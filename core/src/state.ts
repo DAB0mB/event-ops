@@ -1,8 +1,9 @@
-import { Emitter, emitter } from './emitter';
-import { Event } from './event';
+import { Event, EventOptions } from './event';
 import { IValue, Value, getValue, kValue } from './value';
 
-export class State<T> extends Event implements IValue<T> {
+export type StateOptions = EventOptions;
+
+export class State<T> extends Event<void> implements IValue<T> {
   [kValue]: T;
 
   get value(): T {
@@ -16,8 +17,8 @@ export class State<T> extends Event implements IValue<T> {
     this.emit();
   }
 
-  constructor(emitter: Emitter, value: T) {
-    super(emitter);
+  constructor(value: T, options: StateOptions) {
+    super(options);
 
     this[kValue] = value;
   }
@@ -29,8 +30,4 @@ export class State<T> extends Event implements IValue<T> {
   toString() {
     return this.value?.toString();
   }
-}
-
-export function createState<T>(value: T) {
-  return new State<T>(emitter, value);
 }

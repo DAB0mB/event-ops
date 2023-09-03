@@ -1,20 +1,22 @@
-import { Emitter, Listener, Unlistener, emitter } from './emitter';
-import { Event } from './event';
+import { Listener, Unlistener } from './emitter';
+import { Event, EventOptions } from './event';
 
-export class Effect extends Event {
+export type EffectOptions = EventOptions;
+
+export class Effect extends Event<void> {
   private readonly unlisteners = new Set<Unlistener>();
 
-  constructor(emitter: Emitter, private readonly events: Event[]) {
+  constructor(private readonly events: Event<unknown>[], options: EffectOptions) {
+    super(options);
+
     for (const event of events) {
-      if (event.emitter !== emitter) {
+      if (event.emitter !== this.emitter) {
         throw new Error('All events must share the same instance of EventEmitter');
       }
     }
-
-    super(emitter);
   }
 
-  override on(listener: Listener) {
+  override on(listener: Listener<void>) {
     const offEffect = super.on(listener);
     this.unlisteners.add(offEffect)
 
@@ -39,8 +41,4 @@ export class Effect extends Event {
       }
     };
   }
-}
-
-export function createEffect(events: Event[]) {
-  return new Effect(emitter, events);
 }

@@ -1,7 +1,8 @@
-import { Effect } from './effect';
-import { Emitter, emitter } from './emitter';
+import { Effect, EffectOptions } from './effect';
 import { Event } from './event';
 import { IValue, getValue, kValue } from './value';
+
+export type MemoOptions = EffectOptions;
 
 export class Memo<T> extends Effect implements IValue<T> {
   [kValue]!: T;
@@ -16,8 +17,8 @@ export class Memo<T> extends Effect implements IValue<T> {
     return this[kValue];
   }
 
-  constructor(emitter: Emitter, private readonly getter: () => IValue<T> | T, events: Event[]) {
-    super(emitter, events);
+  constructor(private readonly getter: () => IValue<T> | T, events: Event<unknown>[], options: MemoOptions) {
+    super(events, options);
   }
 
   valueOf() {
@@ -32,8 +33,4 @@ export class Memo<T> extends Effect implements IValue<T> {
     this.invalid = true;
     super.emit();
   }
-}
-
-export function createMemo<T>(getter: () => T, events: Event[]) {
-  return new Memo<T>(emitter, getter, events);
 }

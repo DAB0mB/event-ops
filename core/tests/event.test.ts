@@ -4,44 +4,41 @@ import { equal } from 'node:assert';
 
 test('Event', async (t) => {
   await t.test('emit() triggers listeners', async () => {
-    const emitter = new Emitter();
-    const event = new Event(emitter);
+    const event = new Event<void>();
     let callCount = 0;
 
     event.on(() => callCount++);
     event.on(() => callCount++);
     event.on(() => callCount++);
 
-    emitter.emit(event);
+    event.emit();
 
     equal(callCount, 3);
   });
 
   await t.test('disposed listeners are not triggered by emit()', async () => {
-    const emitter = new Emitter();
-    const event = new Event(emitter);
+    const event = new Event<void>();
     let callCount = 0;
 
     event.on(() => callCount++);
     event.on(() => callCount++)();
     event.on(() => callCount++)();
 
-    emitter.emit(event);
+    event.emit();
 
     equal(callCount, 1);
   });
 
-  await t.test('listeners are not triggered by irrelevant emit()', async () => {
-    const emitter = new Emitter();
-    const event = new Event(emitter);
-    let callCount = 0;
+  await t.test('listeners receive value from emit(value)', async () => {
+    const event = new Event<number>();
+    let value = 0;
 
-    event.on(() => callCount++);
-    event.on(() => callCount++);
-    event.on(() => callCount++);
+    event.on((_value) => {
+      value = _value
+    });
 
-    emitter.emit('event');
+    event.emit(1);
 
-    equal(callCount, 0);
+    equal(value, 1);
   });
 });
