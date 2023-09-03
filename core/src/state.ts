@@ -1,8 +1,6 @@
 import { Event, EventOptions } from './event';
 import { IValue, Value, getValue, kValue } from './value';
 
-export type StateOptions = EventOptions;
-
 export class State<T> extends Event<void> implements IValue<T> {
   [kValue]: T;
 
@@ -17,7 +15,7 @@ export class State<T> extends Event<void> implements IValue<T> {
     this.emit();
   }
 
-  constructor(value: T, options: StateOptions) {
+  constructor(value: T, options: EventOptions) {
     super(options);
 
     this[kValue] = value;

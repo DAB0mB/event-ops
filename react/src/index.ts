@@ -1,4 +1,4 @@
-import { Event, IValue, getValue } from 'event-ops';
+import { Event, IValue, Listener, getValue } from 'event-ops';
 import { useEffect, useInsertionEffect, useRef, useState } from 'react';
 
 let renderCount = 0;
@@ -19,7 +19,7 @@ export function useValue<T>(event: Event & IValue<T>) {
   return getValue(event);
 }
 
-export function useListener(event: Event, fn: () => void) {
+export function useListener<T>(event: Event<T>, fn: Listener<T>) {
   const ref = useRef(null as typeof fn);
 
   useInsertionEffect(() => {
@@ -27,6 +27,6 @@ export function useListener(event: Event, fn: () => void) {
   }, [fn]);
 
   useEffect(() => {
-    return event.on((...args) => ref.current(...args));
+    return event.on((value: T) => ref.current(value));
   }, [event]);
 }

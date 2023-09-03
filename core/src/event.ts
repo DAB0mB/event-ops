@@ -5,27 +5,23 @@ export type EventOptions = {
   emitter?: IEmitter,
 }
 
-export type EmitOptions = {
-  emitter?: IEmitter,
-};
-
-export type OnOptions = {
-  emitter?: IEmitter,
-};
+export const kEmitCount = Symbol('value');
 
 export class Event<T = unknown> {
+  [kEmitCount] = 0;
   readonly key = this.options.key ?? this;
   readonly emitter = this.options.emitter ?? defaultEmitter;
 
   constructor(private readonly options: EventOptions = {}) {
   }
 
-  emit(value: T, { emitter = this.emitter }: EmitOptions = {}) {
-    emitter.emit(this.key, value);
+  emit(value: T) {
+    this.emitter.emit(this.key, value);
+    this[kEmitCount]++;
   }
 
-  on(listener: Listener<T>, { emitter = this.emitter }: OnOptions = {}) {
-    return emitter.on(this.key, listener);
+  on(listener: Listener<T>) {
+    return this.emitter.on(this.key, listener);
   }
 }
 

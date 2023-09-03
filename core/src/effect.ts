@@ -1,12 +1,8 @@
 import { Listener, Unlistener } from './emitter';
 import { Event, EventOptions } from './event';
 
-export type EffectOptions = EventOptions;
-
 export class Effect extends Event<void> {
-  private readonly unlisteners = new Set<Unlistener>();
-
-  constructor(private readonly events: Event<unknown>[], options: EffectOptions) {
+  constructor(private readonly events: Event<unknown>[], options: EventOptions) {
     super(options);
 
     for (const event of events) {
@@ -16,28 +12,16 @@ export class Effect extends Event<void> {
     }
   }
 
-  override on(listener: Listener<void>) {
-    const offEffect = super.on(listener);
-    this.unlisteners.add(offEffect)
+  override on(listener: Listener<void>): Unlistener {
+    const unlisteners = [];
 
-    if (this.unlisteners.size == 1) {
-      const emit = () => this.emit();
-
-      for (const event of this.events) {
-        const offEvent = event.on(emit);
-        this.unlisteners.add(offEvent);
-      }
+    for (const event of this.events) {
+      unlisteners.push(event.on(listener));
     }
 
     return () => {
-      offEffect();
-      this.unlisteners.delete(offEffect);
-
-      if (this.unlisteners.size == this.events.length) {
-        for (const offEvent of Array.from(this.unlisteners)) {
-          offEvent();
-          this.unlisteners.delete(offEvent);
-        }
+      for (const unlistener of unlisteners) {
+        unlistener();
       }
     };
   }
