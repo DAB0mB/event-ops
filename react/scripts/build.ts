@@ -4,7 +4,7 @@ import * as ts from 'typescript';
 
 async function build() {
   try {
-    const program = ts.createProgram([resolve(__dirname, '../index.ts')], {
+    const program = ts.createProgram([resolve(__dirname, '../src/index.ts')], {
       declaration: true,
       emitDeclarationOnly: true,
       declarationDir: resolve(__dirname, '../build'),
@@ -13,7 +13,7 @@ async function build() {
     program.emit();
 
     await esbuild.build({
-      entryPoints: [resolve(__dirname, '../index.ts')],
+      entryPoints: [resolve(__dirname, '../src/index.ts')],
       outfile: resolve(__dirname, '../build/index.js'),
       bundle: true,
       sourcemap: true,

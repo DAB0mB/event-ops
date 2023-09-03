@@ -1,4 +1,4 @@
-import { Emitter } from './emitter';
+import { Emitter, emitter } from './emitter';
 import { Event } from './event';
 import { IValue, Value, getValue, kValue } from './value';
 
@@ -29,4 +29,8 @@ export class State<T> extends Event implements IValue<T> {
   toString() {
     return this.value?.toString();
   }
+}
+
+export function createState<T>(value: T) {
+  return new State<T>(emitter, value);
 }

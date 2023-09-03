@@ -3,11 +3,11 @@ import { resolve } from 'path';
 
 async function test() {
   await execa('npm', ['run', 'test'], {
-    cwd: resolve('packages/core'),
+    cwd: resolve('core'),
     stdio: 'inherit',
   });
   await execa('npm', ['run', 'test'], {
-    cwd: resolve('packages/react'),
+    cwd: resolve('react'),
     stdio: 'inherit',
   });
 }

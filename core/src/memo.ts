@@ -1,5 +1,5 @@
 import { Effect } from './effect';
-import { Emitter } from './emitter';
+import { Emitter, emitter } from './emitter';
 import { Event } from './event';
 import { IValue, getValue, kValue } from './value';
 
@@ -32,4 +32,8 @@ export class Memo<T> extends Effect implements IValue<T> {
     this.invalid = true;
     super.emit();
   }
+}
+
+export function createMemo<T>(getter: () => T, events: Event[]) {
+  return new Memo<T>(emitter, getter, events);
 }

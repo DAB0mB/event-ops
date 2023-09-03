@@ -35,3 +35,5 @@ export class Emitter implements IEmitter {
     };
   }
 }
+
+export const emitter = new Emitter();

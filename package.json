@@ -2,12 +2,12 @@
   "name": "event-ops",
   "description": "An event-driven state management library",
   "version": "0.0.1",
-  "main": "packages/core/build",
+  "main": "core/build",
   "files": [
-    "packages/core/package.json",
-    "packages/core/build/**/*",
-    "packages/react/package.json",
-    "packages/react/build/**/*"
+    "core/package.json",
+    "core/build/**/*",
+    "react/package.json",
+    "react/build/**/*"
   ],
   "scripts": {
     "build": "node -r @esbuild-kit/cjs-loader scripts/build.ts",
@@ -16,6 +16,7 @@
   "devDependencies": {
     "@esbuild-kit/cjs-loader": "^2.4.2",
     "@types/node": "^20.5.9",
+    "@types/react": "^18.2.21",
     "esbuild": "^0.17.19",
     "execa": "^7.2.0",
     "react": "^18.2.0",

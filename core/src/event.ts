@@ -1,4 +1,4 @@
-import { IEmitter, Listener } from './emitter';
+import { IEmitter, Listener, emitter } from './emitter';
 
 export class Event {
   constructor(readonly emitter: IEmitter) {
@@ -11,4 +11,10 @@ export class Event {
   on(listener: Listener) {
     return this.emitter.on(this, listener);
   }
+}
+
+export const noopEvent = createEvent();
+
+export function createEvent() {
+  return new Event(emitter);
 }

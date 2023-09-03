@@ -3,7 +3,9 @@
     "lib": ["ESNext"],
     "types": ["node"],
     "paths": {
-      "event-ops/*": ["./packages/core/*"]
+      "event-ops": ["./core/src/index.ts"],
+      "event-ops/core/*": ["./core/src/*"],
+      "event-ops/react/*": ["./react/src/*"]
     }
   }
 }

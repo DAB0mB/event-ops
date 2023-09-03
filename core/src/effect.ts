@@ -1,5 +1,5 @@
+import { Emitter, Listener, Unlistener, emitter } from './emitter';
 import { Event } from './event';
-import { Emitter, Listener, Unlistener } from './emitter';
 
 export class Effect extends Event {
   private readonly unlisteners = new Set<Unlistener>();
@@ -39,4 +39,8 @@ export class Effect extends Event {
       }
     };
   }
+}
+
+export function createEffect(events: Event[]) {
+  return new Effect(emitter, events);
 }

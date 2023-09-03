@@ -6,7 +6,7 @@ const startTime = performance.now();
 
 Promise.allSettled([
   execa('npm', ['run', 'build'], {
-    cwd: resolve('packages/core'),
+    cwd: resolve('core'),
   }).then((cp) => {
     console.log('Core build', {
       duration: measureDuration(),
@@ -15,7 +15,7 @@ Promise.allSettled([
   }),
 
   execa('npm', ['run', 'build'], {
-    cwd: resolve('packages/react'),
+    cwd: resolve('react'),
   }).then((cp) => {
     console.log('React build', {
       duration: measureDuration(),
