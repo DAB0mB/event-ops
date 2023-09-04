@@ -1,7 +1,7 @@
-import { Dropper, Event, IListen, Listener } from './event';
+import { Dropper, IListen, Listener } from './event';
 
 export class Effect implements IListen<void> {
-  constructor(private readonly events: Event<unknown>[]) {
+  constructor(private readonly events: IListen<unknown>[]) {
   }
 
   listen(listener: Listener<void>): Dropper {

@@ -1,6 +1,6 @@
 {
   "name": "event-ops",
-  "description": "An event-driven state management library",
+  "description": "Event Ops (Event Operations) is a library that provides very simple and minimalistic utils to create event-driven programs.",
   "version": "0.0.1",
   "main": "core/build",
   "files": [
