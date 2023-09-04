@@ -21,7 +21,7 @@ export function useListener<T>(event: IListen<T>, fn: Listener<T>) {
   }, [event]);
 }
 
-export function useValue<T>(event: IListen<T> & IValue<T>) {
+export function useValue<T>(event: IListen<T> & IValue<T>): T {
   useListener(event, useUpdate());
 
   return getValue(event);
