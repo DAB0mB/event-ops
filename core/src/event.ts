@@ -1,4 +1,4 @@
-import { IListen, Listener, getListenerTask, initListenerTask } from './listener';
+import { IListen, Listener, _getListenerTask, _initListenerTask } from './listener';
 import { Task } from './task';
 
 export class Event<T = unknown> implements IListen<T> {
@@ -14,7 +14,7 @@ export class Event<T = unknown> implements IListen<T> {
   }
 
   listen(listener: Listener<T>) {
-    const task = initListenerTask(listener);
+    const task = _initListenerTask(listener);
     this.tasks.add(task);
 
     return () => {
@@ -23,7 +23,7 @@ export class Event<T = unknown> implements IListen<T> {
   }
 
   drop(listener: Listener<T>) {
-    const task = getListenerTask(listener);
+    const task = _getListenerTask(listener);
     if (!task) return;
 
     this.tasks.delete(task);

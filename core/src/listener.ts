@@ -9,7 +9,7 @@ export interface IListen<T> {
   drop(listener: Listener<T>): void;
 }
 
-export function initListenerTask<T>(listener: Listener<T>): Task<T> {
+export function _initListenerTask<T>(listener: Listener<T>): Task<T> {
   if (listener instanceof Task) return listener;
 
   if (!listenerTasks.get(listener)) {
@@ -20,6 +20,6 @@ export function initListenerTask<T>(listener: Listener<T>): Task<T> {
   return listenerTasks.get(listener) as Task<T>;
 }
 
-export function getListenerTask<T>(listener: Listener<T>) {
+export function _getListenerTask<T>(listener: Listener<T>) {
   return listenerTasks.get(listener) as Task<T> | undefined;
 }

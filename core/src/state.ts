@@ -1,24 +1,24 @@
 import { Event } from './event';
 import { IListen, Listener } from './listener';
-import { IValue, Value, getValue, kValue } from './value';
+import { IValue, Value, getValue, _kValue } from './value';
 
 export class State<T> implements IListen<T>, IValue<T> {
-  [kValue]: T;
+  [_kValue]: T;
   private readonly event = new Event<T>();
 
   get value(): T {
-    return this[kValue];
+    return this[_kValue];
   }
 
   set value(value: Value<T> | T) {
     if (value === this.value) return;
 
-    this[kValue] = getValue(value);
+    this[_kValue] = getValue(value);
     this.event.emit(this.value);
   }
 
   constructor(value: T) {
-    this[kValue] = value;
+    this[_kValue] = value;
   }
 
   valueOf() {

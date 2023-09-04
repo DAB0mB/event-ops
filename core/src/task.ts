@@ -2,7 +2,7 @@ let currTaskIndex = 0;
 let lastTaskIndex = 0;
 const tasks = new Map<number, Task>();
 
-export type TaskCallback<T> = (value: T) => void;
+export type TaskCallback<T = unknown> = (value: T) => void;
 
 export class Task<T = unknown> {
   private value: T;
