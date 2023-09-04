@@ -1,8 +1,8 @@
+import { Event, State } from 'event-ops';
 import { equal } from 'node:assert';
 import test from 'node:test';
 import * as TestRenderer from 'react-test-renderer';
-import { useListener, useUpdate } from '../src';
-import { Event } from 'event-ops';
+import { useListener, useUpdate, useValue } from '../src';
 
 test('useUpdate()', async (t) => {
   await t.test('tirggers component update', async () => {
@@ -88,5 +88,48 @@ test('useListener()', async (t) => {
     await updating;
 
     equal(updateCount, 1);
+  });
+});
+
+test('useValue()', async (t) => {
+  await t.test('yields initial state value', async () => {
+    const state = new State(1);
+    let value: number;
+
+    const TestComponent = () => {
+      value = useValue(state);
+
+      return null;
+    };
+
+    TestRenderer.create(<TestComponent />);
+
+    const mounting = new Promise(resolve => setTimeout(resolve));
+    await mounting;
+
+    equal(value, 1);
+  });
+
+  await t.test('updates component on state value change', async () => {
+    const state = new State(1);
+    let value: number;
+
+    const TestComponent = () => {
+      value = useValue(state);
+
+      return null;
+    };
+
+    TestRenderer.create(<TestComponent />);
+
+    const mounting = new Promise(resolve => setTimeout(resolve));
+    await mounting;
+
+    state.value = 2;
+
+    const updating = new Promise(resolve => setTimeout(resolve));
+    await updating;
+
+    equal(value, 2);
   });
 });
