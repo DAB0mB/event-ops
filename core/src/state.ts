@@ -3,7 +3,7 @@ import { IValue, Value, getValue, kValue } from './value';
 
 export class State<T> implements IListen<T>, IValue<T> {
   [kValue]: T;
-  readonly event = new Event<T>();
+  private readonly event = new Event<T>();
 
   get value(): T {
     return this[kValue];
