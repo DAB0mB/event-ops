@@ -13,7 +13,7 @@ export class State<T> implements IListen<T>, IValue<T> {
     if (value === this.value) return;
 
     this[kValue] = getValue(value);
-    this.event.emit(this[kValue]);
+    this.event.emit(this.value);
   }
 
   constructor(value: T) {

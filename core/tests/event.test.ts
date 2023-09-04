@@ -16,13 +16,18 @@ test('Event', async (t) => {
     equal(callCount, 3);
   });
 
-  await t.test('disposed listeners are not triggered by emit()', async () => {
+  await t.test('dropped listeners are not triggered by emit()', async () => {
     const event = new Event<void>();
     let callCount = 0;
 
+    const increaseCallCount = () => callCount++;
+
     event.listen(() => callCount++);
-    event.listen(() => callCount++)();
-    event.listen(() => callCount++)();
+    event.listen(increaseCallCount);
+    const dropIncreaseCallCount = event.listen(() => callCount++);
+
+    event.drop(increaseCallCount);
+    dropIncreaseCallCount();
 
     event.emit();
 

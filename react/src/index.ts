@@ -1,13 +1,11 @@
 import { IListen, IValue, Listener, getValue } from 'event-ops';
 import { useCallback, useEffect, useInsertionEffect, useRef, useState } from 'react';
 
-let updateKey = 0;
-
 export function useUpdate() {
-  const [, setState] = useState(updateKey);
+  const [, setUpdateKey] = useState(0);
 
   return useCallback(() => {
-    setState(() => ++updateKey);
+    setUpdateKey(updateKey => ++updateKey);
   }, []);
 }
 
