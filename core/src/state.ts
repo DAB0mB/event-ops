@@ -1,8 +1,9 @@
-import { Event, EventOptions } from './event';
+import { Dropper, Event, IListen, Listener } from './event';
 import { IValue, Value, getValue, kValue } from './value';
 
-export class State<T> extends Event<void> implements IValue<T> {
+export class State<T> implements IListen<T>, IValue<T> {
   [kValue]: T;
+  readonly event = new Event<T>();
 
   get value(): T {
     return this[kValue];
@@ -12,12 +13,10 @@ export class State<T> extends Event<void> implements IValue<T> {
     if (value === this.value) return;
 
     this[kValue] = getValue(value);
-    this.emit();
+    this.event.emit(this[kValue]);
   }
 
-  constructor(value: T, options: EventOptions) {
-    super(options);
-
+  constructor(value: T) {
     this[kValue] = value;
   }
 
@@ -27,5 +26,13 @@ export class State<T> extends Event<void> implements IValue<T> {
 
   toString() {
     return this.value?.toString();
+  }
+
+  listen(listener: Listener<T>): Dropper {
+    return this.event.listen(listener);
+  }
+
+  drop(listener: Listener<T>): void {
+    this.event.drop(listener);
   }
 }

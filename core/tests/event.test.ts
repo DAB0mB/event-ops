@@ -1,5 +1,5 @@
 import { test } from 'node:test';
-import { Emitter, Event } from '../src';
+import { Event } from '../src';
 import { equal } from 'node:assert';
 
 test('Event', async (t) => {
@@ -7,9 +7,9 @@ test('Event', async (t) => {
     const event = new Event<void>();
     let callCount = 0;
 
-    event.on(() => callCount++);
-    event.on(() => callCount++);
-    event.on(() => callCount++);
+    event.listen(() => callCount++);
+    event.listen(() => callCount++);
+    event.listen(() => callCount++);
 
     event.emit();
 
@@ -20,9 +20,9 @@ test('Event', async (t) => {
     const event = new Event<void>();
     let callCount = 0;
 
-    event.on(() => callCount++);
-    event.on(() => callCount++)();
-    event.on(() => callCount++)();
+    event.listen(() => callCount++);
+    event.listen(() => callCount++)();
+    event.listen(() => callCount++)();
 
     event.emit();
 
@@ -33,7 +33,7 @@ test('Event', async (t) => {
     const event = new Event<number>();
     let value = 0;
 
-    event.on((_value) => {
+    event.listen((_value) => {
       value = _value
     });
 
