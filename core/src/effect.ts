@@ -1,10 +1,10 @@
-import { Dropper, IListen, Listener } from './event';
+import { IListen, Listener } from './listener';
 
 export class Effect implements IListen<void> {
   constructor(private readonly events: IListen<unknown>[]) {
   }
 
-  listen(listener: Listener<void>): Dropper {
+  listen(listener: Listener<void>) {
     for (const event of this.events) {
       event.listen(listener);
     }
@@ -14,7 +14,7 @@ export class Effect implements IListen<void> {
     };
   }
 
-  drop(listener: Listener<void>): void {
+  drop(listener: Listener<void>) {
     for (const event of this.events) {
       event.drop(listener);
     }

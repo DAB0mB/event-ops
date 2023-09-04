@@ -1,6 +1,6 @@
-import { test } from 'node:test';
-import { Event } from '../src';
 import { equal } from 'node:assert';
+import { test } from 'node:test';
+import { Event, scheduleTask } from '../src';
 
 test('Event', async (t) => {
   await t.test('emit() triggers listeners', async () => {
@@ -45,5 +45,22 @@ test('Event', async (t) => {
     event.emit(1);
 
     equal(value, 1);
+  });
+
+  await t.test('listeners are scheduled as a task', async () => {
+    const event = new Event<void>();
+    let callCount = 0;
+
+    event.listen(() => callCount++);
+    event.listen(() => callCount++);
+    event.listen(() => callCount++);
+
+    scheduleTask(() => {
+      event.emit();
+      event.emit();
+      event.emit();
+    });
+
+    equal(callCount, 3);
   });
 });

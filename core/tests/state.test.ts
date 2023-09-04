@@ -1,6 +1,6 @@
 import { equal } from 'node:assert';
 import { test } from 'node:test';
-import { State, Value } from '../src';
+import { State, Value, scheduleTask } from '../src';
 
 test('State', async (t) => {
   await t.test('state is initialized with provided value', async () => {
@@ -63,5 +63,22 @@ test('State', async (t) => {
     state.value = 2;
 
     equal(callCount, 1);
+  });
+
+  await t.test('listeners are scheduled as a task', async () => {
+    const state = new State(1);
+
+    state.listen((value) => {
+      equal(value, 4);
+      equal(state.value, 4);
+    });
+
+    scheduleTask(() => {
+      state.value = 2;
+      state.value = 3;
+      state.value = 4;
+    });
+
+    equal(state.value, 4);
   });
 });

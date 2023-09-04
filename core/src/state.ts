@@ -1,4 +1,5 @@
-import { Dropper, Event, IListen, Listener } from './event';
+import { Event } from './event';
+import { IListen, Listener } from './listener';
 import { IValue, Value, getValue, kValue } from './value';
 
 export class State<T> implements IListen<T>, IValue<T> {
@@ -28,11 +29,11 @@ export class State<T> implements IListen<T>, IValue<T> {
     return this.value?.toString();
   }
 
-  listen(listener: Listener<T>): Dropper {
+  listen(listener: Listener<T>) {
     return this.event.listen(listener);
   }
 
-  drop(listener: Listener<T>): void {
+  drop(listener: Listener<T>) {
     this.event.drop(listener);
   }
 }

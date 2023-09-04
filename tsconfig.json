@@ -3,6 +3,7 @@
     "lib": ["ESNext", "DOM"],
     "types": ["node"],
     "jsx": "react-jsx",
+    "strictNullChecks": true,
     "paths": {
       "event-ops": ["./core/src/index.ts"],
       "event-ops/core/*": ["./core/src/*"],
