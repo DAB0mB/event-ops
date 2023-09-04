@@ -39,6 +39,14 @@ export function SumLabel() {
 
 For a robust example, I recommend you to look at the [parallax-chess](https://dab0mb.github.io/parallax-chess/) project.
 
+## Installation
+
+Event Ops can be installed via NPM:
+
+```
+npm install event-ops
+```
+
 ## API
 
 - core
