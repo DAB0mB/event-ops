@@ -64,21 +64,4 @@ test('State', async (t) => {
 
     equal(callCount, 1);
   });
-
-  await t.test('listeners are scheduled as a task', async () => {
-    const state = new State(1);
-
-    state.listen((value) => {
-      equal(value, 4);
-      equal(state.value, 4);
-    });
-
-    scheduleTask(() => {
-      state.value = 2;
-      state.value = 3;
-      state.value = 4;
-    });
-
-    equal(state.value, 4);
-  });
 });

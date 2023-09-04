@@ -63,4 +63,25 @@ test('Event', async (t) => {
 
     equal(callCount, 3);
   });
+
+  await t.test('dropped listeners are not triggered by a task', async () => {
+    const event = new Event<void>();
+    let callCount = 0;
+
+    const drop1 = event.listen(() => callCount++);
+    const drop2 = event.listen(() => callCount++);
+    event.listen(() => callCount++);
+
+    scheduleTask(() => {
+      drop1();
+
+      event.emit();
+      event.emit();
+      event.emit();
+
+      drop2();
+    });
+
+    equal(callCount, 1);
+  });
 });

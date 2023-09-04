@@ -27,6 +27,7 @@ export class Event<T = unknown> implements IListen<T> {
     if (!task) return;
 
     this.tasks.delete(task);
+    task.drop();
   }
 }
 

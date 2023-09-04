@@ -53,6 +53,7 @@ npm install event-ops
   - [Event](#coreevent)
   - [State](#corestate)
   - [Effect](#coreeffect)
+  - [Task](#coretask)
 - react
   - [useListener](#reactuselistener)
   - [useValue](#reactusevalue)
@@ -145,6 +146,46 @@ dropSumListener();
 // OR
 
 sumEffect.drop(sumListener);
+```
+
+### core/Task
+
+All listeners are scheduled to run using a Task system to prevent redundant computations. To tap into the Task system, you can use the Task object.
+
+```ts
+import { State, Effect, Task, scheduleTask } from 'event-ops';
+
+const num1State = new State(0);
+const num2State = new State(0);
+const sumEffect = new Effect([num1State, num2State]);
+
+const dropSumListener = sumEffect.listen(() => {
+  console.log(`New sum is ${num1State.value + num2State.value}`);
+}, [num1State, num2State]);
+
+// Here we emit only a single change by scheduling a Task
+
+const sumTask = new Task(() => {
+  num1State.value = 100;
+  num2State.value = 200;
+});
+
+const dropSumTask = sumTask.schedule();
+
+// Which is equivalent to ...
+
+const dropSumTask = scheduleTask(() => {
+  num1State.value = 100;
+  num2State.value = 200;
+});
+
+// ... some time later ...
+
+sumTask.drop();
+
+// OR
+
+dropSumTask();
 ```
 
 ### react/useListener
