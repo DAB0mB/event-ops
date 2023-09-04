@@ -20,7 +20,7 @@ export class Calculator {
 }
 ```
 
-To use `sumState` in a React component, we can import some helpers from `event-ops/react`:
+To use `sumState` in a React component, you can import some helpers from `event-ops/react`:
 
 ```jsx
 import { useValue } from 'event-ops/react';
@@ -134,7 +134,7 @@ const sumEffect = new Effect([num1State, num2State]);
 
 const dropSumListener = sumEffect.listen(() => {
   console.log(`New sum is ${num1State.value + num2State.value}`);
-}, [num1State, num2State]);
+});
 
 num1State.value = 100;
 num2State.value = 200;
@@ -157,35 +157,38 @@ import { State, Effect, Task, scheduleTask } from 'event-ops';
 
 const num1State = new State(0);
 const num2State = new State(0);
-const sumEffect = new Effect([num1State, num2State]);
 
-const dropSumListener = sumEffect.listen(() => {
+new Effect([num1State, num2State]).listen(() => {
   console.log(`New sum is ${num1State.value + num2State.value}`);
-}, [num1State, num2State]);
+});
 
 // Here we emit only a single change by scheduling a Task
+
+scheduleTask(() => {
+  num1State.value = 100;
+  num2State.value = 200;
+});
+
+// Which is equivalent to ...
 
 const sumTask = new Task(() => {
   num1State.value = 100;
   num2State.value = 200;
 });
 
-const dropSumTask = sumTask.schedule();
+sumTask.schedule();
+```
 
-// Which is equivalent to ...
+If some time later you would like to drop a scheduled Task, you can do so with the `drop()` method. This would only be relevant if the Task has not been run yet.
 
-const dropSumTask = scheduleTask(() => {
-  num1State.value = 100;
-  num2State.value = 200;
+```ts
+const dropTask = scheduleTask(() => {
+  // perform task
 });
 
 // ... some time later ...
 
-sumTask.drop();
-
-// OR
-
-dropSumTask();
+dropTask();
 ```
 
 ### react/useListener
