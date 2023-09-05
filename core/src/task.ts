@@ -3,6 +3,7 @@ let lastTaskIndex = 0;
 const tasks = new Map<number, Task>();
 
 export type TaskCallback<T = unknown> = (value: T) => void;
+export type TaskDropFn = () => void;
 
 export class Task<T = unknown> {
   private value: T;
@@ -11,7 +12,7 @@ export class Task<T = unknown> {
   constructor(private readonly callback: TaskCallback<T>) {
   }
 
-  schedule(value: T) {
+  schedule(value: T): TaskDropFn {
     this.value = value;
 
     if (this.index == null) {

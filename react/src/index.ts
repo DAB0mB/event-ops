@@ -10,14 +10,14 @@ export function useUpdate() {
 }
 
 export function useListener<T>(event: IListen<T>, fn: Listener<T>) {
-  const ref = useRef(null as typeof fn);
+  const ref = useRef<Listener<T> | null>(null);
 
   useInsertionEffect(() => {
     ref.current = fn;
   }, [fn]);
 
   useEffect(() => {
-    return event.listen((value: T) => ref.current(value));
+    return event.listen((value: T) => ref.current!(value));
   }, [event]);
 }
 
