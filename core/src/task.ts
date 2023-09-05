@@ -34,7 +34,8 @@ export class Task<T = unknown> {
   }
 
   private run() {
-    if (this.index !== currTaskIndex) return;
+    const nextTask = getNextTask();
+    if (nextTask !== this) return;
 
     try {
       this.callback(this.value);
@@ -47,13 +48,16 @@ export class Task<T = unknown> {
 }
 
 function getNextTask() {
-  const nextTaskIndex = ++currTaskIndex;
   if (!tasks.size) return;
 
-  const task = tasks.get(nextTaskIndex);
-  if (task) return task;
+  while (currTaskIndex <= lastTaskIndex) {
+    const task = tasks.get(currTaskIndex);
+    if (task) return task;
 
-  return getNextTask();
+    ++currTaskIndex;
+  }
+
+  console.warn(`currentTaskIndex (${currTaskIndex}) exceeded lastTaskIndex (${lastTaskIndex}); this is not right`);
 }
 
 export function scheduleTask(callback: TaskCallback<void>) {
