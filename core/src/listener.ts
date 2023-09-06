@@ -1,4 +1,4 @@
-export type Listener<T = unknown> = (value: T) => void;
+export type Listener<T = void> = (value: T) => void;
 export type ListenerDropFn = () => void;
 
 export interface IListen<T> {

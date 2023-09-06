@@ -1,6 +1,6 @@
 import { equal } from 'node:assert';
 import { test } from 'node:test';
-import { State, Value, scheduleTask } from '../src';
+import { LazyValue, State, Value } from '../src';
 
 test('State', async (t) => {
   await t.test('state is initialized with provided value', async () => {
@@ -63,5 +63,38 @@ test('State', async (t) => {
     state.value = 2;
 
     equal(callCount, 1);
+  });
+
+  await t.test('computes value lazily if LazyValue was used', async () => {
+    const num1State = new State(0);
+    const num2State = new State(0);
+    let callCount = 0;
+
+    const getSum = () => new LazyValue(() => {
+      callCount++;
+      return num1State.value + num2State.value;
+    });
+
+    const sumState=  new State(getSum());
+    num1State.value = 100;
+    num2State.value = 200;
+
+    sumState.value;
+    sumState.value;
+    sumState.value;
+
+    equal(sumState.value, 300);
+    equal(callCount, 1);
+
+    sumState.value = getSum();
+    num1State.value = 200;
+    num2State.value = 300;
+
+    sumState.value;
+    sumState.value;
+    sumState.value;
+
+    equal(sumState.value, 500);
+    equal(callCount, 2);
   });
 });

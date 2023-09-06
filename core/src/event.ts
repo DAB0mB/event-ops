@@ -1,7 +1,7 @@
 import { IListen, Listener, ListenerDropFn } from './listener';
 import { Task } from './task';
 
-export class Event<T = unknown> implements IListen<T> {
+export class Event<T = void> implements IListen<T> {
   private readonly tasks = new Map<Listener<T>, Task<T>>();
 
   constructor() {
@@ -30,6 +30,10 @@ export class Event<T = unknown> implements IListen<T> {
 
     this.tasks.delete(listener);
     task.drop();
+  }
+
+  hasAnyListeners() {
+    return Boolean(this.tasks.size);
   }
 }
 

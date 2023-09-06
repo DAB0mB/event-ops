@@ -21,7 +21,7 @@ test('useUpdate()', async (t) => {
     const mounting = new Promise(resolve => setTimeout(resolve));
     await mounting;
 
-    update();
+    update!();
 
     const updating = new Promise(resolve => setTimeout(resolve));
     await updating;
@@ -107,7 +107,7 @@ test('useValue()', async (t) => {
     const mounting = new Promise(resolve => setTimeout(resolve));
     await mounting;
 
-    equal(value, 1);
+    equal(value!, 1);
   });
 
   await t.test('updates component on state value change', async () => {
@@ -130,6 +130,6 @@ test('useValue()', async (t) => {
     const updating = new Promise(resolve => setTimeout(resolve));
     await updating;
 
-    equal(value, 2);
+    equal(value!, 2);
   });
 });

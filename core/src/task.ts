@@ -1,11 +1,11 @@
 let currTaskIndex = 0;
 let lastTaskIndex = 0;
-const tasks = new Map<number, Task>();
+const tasks = new Map<number, Task<unknown>>();
 
-export type TaskCallback<T = unknown> = (value: T) => void;
+export type TaskCallback<T = void> = (value: T) => void;
 export type TaskDropFn = () => void;
 
-export class Task<T = unknown> {
+export class Task<T = void> {
   private value: T;
   private index: number | null = null;
 
@@ -59,8 +59,4 @@ function getNextTask() {
   }
 
   console.warn(`currentTaskIndex (${currTaskIndex}) exceeded lastTaskIndex (${lastTaskIndex}); this is not right`);
-}
-
-export function scheduleTask(callback: TaskCallback<void>) {
-  return new Task(callback).schedule();
 }

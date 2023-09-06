@@ -1,22 +1,22 @@
 import { equal } from 'node:assert';
-import { Task, scheduleTask } from '../src';
+import { Task } from '../src';
 import test from 'node:test';
 
 test('Task', async (t) => {
   await t.test('scheduled tasks are executed based on their order', () => {
     let message = '';
 
-    scheduleTask(() => {
-      scheduleTask(() => {
+    new Task(() => {
+      new Task(() => {
         message += '2';
-      });
+      }).schedule();
 
-      scheduleTask(() => {
+      new Task(() => {
         message += '3';
-      });
+      }).schedule();
 
       message += '1';
-    });
+    }).schedule();
 
     equal(message, '123');
   });
@@ -24,17 +24,17 @@ test('Task', async (t) => {
   await t.test('dropped tasks are not executed', () => {
     let message = '';
 
-    scheduleTask(() => {
-      scheduleTask(() => {
+    new Task(() => {
+      new Task(() => {
         message += '2';
-      })();
+      }).schedule()();
 
-      scheduleTask(() => {
+      new Task(() => {
         message += '3';
-      });
+      }).schedule();
 
       message += '1';
-    });
+    }).schedule();
 
     equal(message, '13');
   });
@@ -42,15 +42,15 @@ test('Task', async (t) => {
   await t.test('a task will be executed only once if it was scheduled multiple times before it was flushed', () => {
     let message = '';
 
-    const task = new Task<void>(() => {
+    const task = new Task(() => {
       message += '2';
     });
 
-    scheduleTask(() => {
+    new Task(() => {
       task.schedule();
       task.schedule();
       message += '1';
-    });
+    }).schedule();
 
     task.schedule();
 

@@ -3,19 +3,20 @@
 Event Ops (Event Operations) is a library that provides very simple and minimalistic utils to create event-driven programs. Event Ops was designed to work in any JavaScript environment and doesn't have any dependencies. With that said, it does provide additional helpers to work with React. Here's an example of how one can use Event Ops to write an event-driven controller:
 
 ```js
-import { State } from 'event-ops';
+import { Effect, LazyValue, State } from 'event-ops';
 
 export class Calculator {
-  readonly num1State = new State(0);
-  readonly num2State = new State(0);
+  readonly num1State = new State(100);
+  readonly num2State = new State(200);
   readonly sumState = new State(0);
+  readonly sumEffect = new Effect([num1State, num2State]);
 
   constructor() {
-    const sumEffect = new Effect([num1State, num2State]);
-
     sumEffect.listen(() => {
-      this.sumState.value = num1State.value + num2State.value;
+      this.sumState.value = new LazyValue(() => num1State.value + num2State.value);
     });
+
+    sumEffect.emit();
   }
 }
 ```
@@ -54,6 +55,7 @@ npm install event-ops
   - [State](#corestate)
   - [Effect](#coreeffect)
   - [Task](#coretask)
+  - [Value](#corevalue)
 - react
   - [useListener](#reactuselistener)
   - [useValue](#reactusevalue)
@@ -153,7 +155,7 @@ sumEffect.drop(sumListener);
 All listeners are scheduled to run using a Task system to prevent redundant computations. To tap into the Task system, you can use the Task object.
 
 ```ts
-import { State, Effect, Task, scheduleTask } from 'event-ops';
+import { State, Effect, Task } from 'event-ops';
 
 const num1State = new State(0);
 const num2State = new State(0);
@@ -163,13 +165,6 @@ new Effect([num1State, num2State]).listen(() => {
 });
 
 // Here we emit only a single change by scheduling a Task
-
-scheduleTask(() => {
-  num1State.value = 100;
-  num2State.value = 200;
-});
-
-// Which is equivalent to ...
 
 const sumTask = new Task(() => {
   num1State.value = 100;
@@ -182,13 +177,53 @@ sumTask.schedule();
 If some time later you would like to drop a scheduled Task, you can do so with the `drop()` method. This would only be relevant if the Task has not been run yet.
 
 ```ts
-const dropTask = scheduleTask(() => {
+const task = new Task(() => {
   // perform task
 });
+
+const dropTask = task.schedule();
 
 // ... some time later ...
 
 dropTask();
+
+// OR
+
+task.drop();
+```
+
+### core/Value
+
+A Value object is useful if you would like to force-emit a State change, even if the underlying object remains the same:
+
+```ts
+import { Value, State } from 'event-ops';
+
+const state = new State(1);
+
+state.listen(() => {
+  console.log('State value should remain 1');
+});
+
+state.value = new Value();
+```
+
+Some listeners may include heavy computations, in which case you can use a LazyValue object to compute a value only once at runtime. If you reset the State value with a new LazyValue object, the cache of the underlying value would be invalidated and the computation would rerun the next time the LazyValue is consumed:
+
+```ts
+import { LazyValue, State } from 'event-ops';
+
+const state = new State<unknown[]>([]);
+const veryFrequentEvent = new Event<unknown[]>();
+
+veryFrequentEvent.listen((value) => {
+  state.value = new LazyValue(() => veryHeavyTransform(value));
+});
+
+// ... some time later ...
+
+// veryHeavyTransform() should only be called once
+console.log(state.value);
 ```
 
 ### react/useListener
