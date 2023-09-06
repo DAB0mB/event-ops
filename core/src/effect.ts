@@ -1,10 +1,10 @@
-import { IListen, Listener } from './listener';
+import { IListen, Listener, ListenerDropFn } from './listener';
 
 export class Effect implements IListen<void> {
   constructor(private readonly events: IListen<unknown>[]) {
   }
 
-  listen(listener: Listener<void>) {
+  listen(listener: Listener<void>): ListenerDropFn {
     for (const event of this.events) {
       event.listen(listener);
     }
