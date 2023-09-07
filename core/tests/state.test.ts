@@ -9,11 +9,11 @@ test('State', async (t) => {
     equal(state.value, 1);
   });
 
-  await t.test('value change triggers listeners with state value', async () => {
+  await t.test('value change emits state', async () => {
     const state = new State(1);
 
-    state.listen((value) => {
-      equal(value, 2);
+    state.listen((stateRef) => {
+      equal(stateRef, state);
       equal(state.value, 2);
     });
 
@@ -22,7 +22,7 @@ test('State', async (t) => {
     equal(state.value, 2);
   });
 
-  await t.test('listeners are not triggered if value remains the same', async () => {
+  await t.test('does not emit anything if value remains the same', async () => {
     const state = new State(1);
 
     state.listen(() => {
@@ -37,8 +37,7 @@ test('State', async (t) => {
   await t.test('listeners are force-triggered by new value object', async () => {
     const state = new State(1);
 
-    state.listen((value) => {
-      equal(value, 1);
+    state.listen(() => {
       equal(state.value, 1);
     });
 

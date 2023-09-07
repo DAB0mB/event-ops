@@ -31,10 +31,6 @@ export class Event<T = void> implements IListen<T> {
     this.tasks.delete(listener);
     task.drop();
   }
-
-  hasAnyListeners() {
-    return Boolean(this.tasks.size);
-  }
 }
 
 export const voidEvent = new Event<void>();

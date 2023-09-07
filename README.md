@@ -93,8 +93,8 @@ import { State } from 'event-ops';
 
 const colorState = new State('red');
 
-const dropColorListener = colorState.listen((color) => {
-  console.log(`Color changed to ${color}`)
+const dropColorListener = colorState.listen((optionalStateRef) => {
+  console.log(`Color changed to ${colorState.value}`)
 });
 
 colorState.value = 'green';
@@ -115,8 +115,8 @@ import { State, Value } from 'event-ops';
 
 const colorState = new State('red');
 
-colorState.listen((color) => {
-  console.log(`Expected color is red (actual: ${color})`)
+colorState.listen(() => {
+  console.log('Color is still red')
 });
 
 colorState.value = new Value('red');
@@ -166,12 +166,10 @@ new Effect([num1State, num2State]).listen(() => {
 
 // Here we emit only a single change by scheduling a Task
 
-const sumTask = new Task(() => {
+new Task(() => {
   num1State.value = 100;
   num2State.value = 200;
-});
-
-sumTask.schedule();
+}).schedule();
 ```
 
 If some time later you would like to drop a scheduled Task, you can do so with the `drop()` method. This would only be relevant if the Task has not been run yet.
@@ -202,10 +200,10 @@ import { Value, State } from 'event-ops';
 const state = new State(1);
 
 state.listen(() => {
-  console.log('State value should remain 1');
+  console.log('Value is still 1');
 });
 
-state.value = new Value();
+state.value = new Value(1);
 ```
 
 Some listeners may include heavy computations, in which case you can use a LazyValue object to compute a value only once at runtime. If you reset the State value with a new LazyValue object, the cache of the underlying value would be invalidated and the computation would rerun the next time the LazyValue is consumed:
@@ -238,7 +236,7 @@ const clickEvent = new Event<[number, number]>();
 
 function Component() {
   useListener(clickEvent, ([x, y]) => {
-    console.log(`Click coord: ${x},${y}`);
+    console.log(`Mouse coord: ${x},${y}`);
   });
 
   return null;
