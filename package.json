@@ -12,7 +12,8 @@
   "scripts": {
     "build": "node -r @esbuild-kit/cjs-loader scripts/build.ts",
     "test": "node -r @esbuild-kit/cjs-loader scripts/test.ts",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run test"
   },
   "devDependencies": {
     "@esbuild-kit/cjs-loader": "^2.4.2",
