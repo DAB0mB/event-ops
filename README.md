@@ -94,8 +94,8 @@ import { State } from 'event-ops';
 
 const colorState = new State('red');
 
-const clearColorListener = colorState.listen((optionalStateRef) => {
-  console.log(`Color changed to ${colorState.value}`)
+const clearColorListener = colorState.listen((color) => {
+  console.log(`Color changed to ${color}`)
 });
 
 colorState.value = 'green';

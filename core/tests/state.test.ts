@@ -12,8 +12,8 @@ test('State', async (t) => {
   await t.test('value change emits state', async () => {
     const state = new State(1);
 
-    state.listen((stateRef) => {
-      equal(stateRef, state);
+    state.listen((value) => {
+      equal(value, state.value);
       equal(state.value, 2);
     });
 

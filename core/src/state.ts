@@ -2,10 +2,11 @@ import { Event } from './event';
 import { IListen, Listener } from './listener';
 import { IValue, LazyValue, Value, getLazyValue, getValue, kValue } from './value';
 
-export class State<T> implements IListen<State<T>>, IValue<T> {
+export class State<T> implements IListen<T>, IValue<T> {
   private valueCache?: T;
   private lazyValue: LazyValue<T> | T;
-  private readonly event = new Event<State<T>>();
+  private listenersCount = 0;
+  private readonly event = new Event<T>();
 
   get [kValue]() {
     return this.value;
@@ -29,22 +30,28 @@ export class State<T> implements IListen<State<T>>, IValue<T> {
   }
 
   valueOf() {
-    return this.value;
+    return this.value?.valueOf();
   }
 
   toString() {
     return this.value?.toString();
   }
 
-  listen(listener: Listener<State<T>>) {
+  listen(listener: Listener<T>) {
+    this.listenersCount++;
+
     return this.event.listen(listener);
   }
 
-  unlisten(listener: Listener<State<T>>) {
+  unlisten(listener: Listener<T>) {
+    this.listenersCount--;
+
     this.event.unlisten(listener);
   }
 
   emit() {
-    this.event.emit(this);
+    if (!this.listenersCount) return;
+
+    this.event.emit(this.value);
   }
 }
