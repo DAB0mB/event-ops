@@ -46,7 +46,7 @@ test('State', async (t) => {
     equal(state.value, 1);
   });
 
-  await t.test('dropped listeners are not triggered by value change', async () => {
+  await t.test('cleared listeners are not triggered by value change', async () => {
     const state = new State(1);
     let callCount = 0;
 
@@ -54,10 +54,10 @@ test('State', async (t) => {
 
     state.listen(() => callCount++);
     state.listen(increaseCallCount);
-    const dropIncreaseCallCount = state.listen(() => callCount++);
+    const clearIncreaseCallCount = state.listen(() => callCount++);
 
-    state.drop(increaseCallCount);
-    dropIncreaseCallCount();
+    state.unlisten(increaseCallCount);
+    clearIncreaseCallCount();
 
     state.value = 2;
 
@@ -67,14 +67,14 @@ test('State', async (t) => {
   await t.test('computes value lazily if LazyValue was used', async () => {
     const num1State = new State(0);
     const num2State = new State(0);
+    const sumState = new State(0);
     let callCount = 0;
 
-    const getSum = () => new LazyValue(() => {
+    sumState.value = new LazyValue(() => {
       callCount++;
       return num1State.value + num2State.value;
     });
 
-    const sumState=  new State(getSum());
     num1State.value = 100;
     num2State.value = 200;
 
@@ -85,15 +85,19 @@ test('State', async (t) => {
     equal(sumState.value, 300);
     equal(callCount, 1);
 
-    sumState.value = getSum();
-    num1State.value = 200;
-    num2State.value = 300;
+    sumState.value = new LazyValue(() => {
+      callCount++;
+      return num1State.value - num2State.value;
+    });
+
+    num1State.value = 300;
+    num2State.value = 100;
 
     sumState.value;
     sumState.value;
     sumState.value;
 
-    equal(sumState.value, 500);
+    equal(sumState.value, 200);
     equal(callCount, 2);
   });
 });

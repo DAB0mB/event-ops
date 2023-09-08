@@ -1,9 +1,10 @@
+import { ClearFn } from './utils';
+
 let currTaskIndex = 0;
 let lastTaskIndex = 0;
 const tasks = new Map<number, Task<unknown>>();
 
 export type TaskCallback<T = void> = (value: T) => void;
-export type TaskDropFn = () => void;
 
 export class Task<T = void> {
   private value: T;
@@ -12,7 +13,7 @@ export class Task<T = void> {
   constructor(private readonly callback: TaskCallback<T>) {
   }
 
-  schedule(value: T): TaskDropFn {
+  schedule(value: T): ClearFn {
     this.value = value;
 
     if (this.index == null) {
@@ -23,11 +24,11 @@ export class Task<T = void> {
     this.run();
 
     return () => {
-      this.drop();
+      this.unlisten();
     };
   }
 
-  drop() {
+  unlisten() {
     if (this.index == null) return;
 
     tasks.delete(this.index);
@@ -42,7 +43,7 @@ export class Task<T = void> {
       this.callback(this.value);
     }
     finally {
-      this.drop();
+      this.unlisten();
       getNextTask()?.run();
     }
   }

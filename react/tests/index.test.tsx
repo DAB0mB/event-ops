@@ -61,7 +61,7 @@ test('useListener()', async (t) => {
     equal(updateCount, 2);
   });
 
-  await t.test('listener is dropped on unmount', async () => {
+  await t.test('listener is cleared on unmount', async () => {
     const event = new Event<void>();
     let updateCount = 0;
 

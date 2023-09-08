@@ -16,7 +16,7 @@ test('Event', async (t) => {
     equal(callCount, 3);
   });
 
-  await t.test('dropped listeners are not triggered by emit()', async () => {
+  await t.test('cleared listeners are not triggered by emit()', async () => {
     const event = new Event();
     let callCount = 0;
 
@@ -24,10 +24,10 @@ test('Event', async (t) => {
 
     event.listen(() => callCount++);
     event.listen(increaseCallCount);
-    const dropIncreaseCallCount = event.listen(() => callCount++);
+    const clearIncreaseCallCount = event.listen(() => callCount++);
 
-    event.drop(increaseCallCount);
-    dropIncreaseCallCount();
+    event.unlisten(increaseCallCount);
+    clearIncreaseCallCount();
 
     event.emit();
 
@@ -64,22 +64,22 @@ test('Event', async (t) => {
     equal(callCount, 3);
   });
 
-  await t.test('dropped listeners are not triggered by a task', async () => {
+  await t.test('clearped listeners are not triggered by a task', async () => {
     const event = new Event();
     let callCount = 0;
 
-    const drop1 = event.listen(() => callCount++);
-    const drop2 = event.listen(() => callCount++);
+    const clear1 = event.listen(() => callCount++);
+    const clear2 = event.listen(() => callCount++);
     event.listen(() => callCount++);
 
     new Task(() => {
-      drop1();
+      clear1();
 
       event.emit();
       event.emit();
       event.emit();
 
-      drop2();
+      clear2();
     }).schedule();
 
     equal(callCount, 1);

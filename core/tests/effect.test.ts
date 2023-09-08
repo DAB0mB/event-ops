@@ -19,7 +19,7 @@ test('Effect', async (t) => {
     equal(callCount, 3);
   });
 
-  await t.test('dropped listeners are not triggered by emit()', async () => {
+  await t.test('cleared listeners are not triggered by emit()', async () => {
     const event1 = new Event();
     const event2 = new Event();
     const event3 = new Event();
@@ -30,10 +30,10 @@ test('Effect', async (t) => {
 
     effect.listen(() => callCount++);
     effect.listen(increaseCallCount);
-    const dropIncreaseCallCount = effect.listen(() => callCount++);
+    const clearIncreaseCallCount = effect.listen(() => callCount++);
 
-    effect.drop(increaseCallCount);
-    dropIncreaseCallCount();
+    effect.unlisten(increaseCallCount);
+    clearIncreaseCallCount();
 
     event1.emit();
     event2.emit();

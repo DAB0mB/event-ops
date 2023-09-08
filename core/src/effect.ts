@@ -1,5 +1,6 @@
 import { Event } from './event';
-import { IListen, Listener, ListenerDropFn } from './listener';
+import { IListen, Listener } from './listener';
+import { ClearFn } from './utils';
 
 export class Effect implements IListen<void> {
   private readonly emitter = new Event<void>();
@@ -7,7 +8,7 @@ export class Effect implements IListen<void> {
   constructor(private readonly events: IListen<unknown>[]) {
   }
 
-  listen(listener: Listener<void>): ListenerDropFn {
+  listen(listener: Listener<void>): ClearFn {
     this.emitter.listen(listener);
 
     for (const event of this.events) {
@@ -15,15 +16,15 @@ export class Effect implements IListen<void> {
     }
 
     return () => {
-      this.drop(listener);
+      this.unlisten(listener);
     };
   }
 
-  drop(listener: Listener<void>) {
-    this.emitter.drop(listener);
+  unlisten(listener: Listener<void>) {
+    this.emitter.unlisten(listener);
 
     for (const event of this.events) {
-      event.drop(listener);
+      event.unlisten(listener);
     }
   }
 

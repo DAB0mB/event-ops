@@ -21,7 +21,7 @@ test('Task', async (t) => {
     equal(message, '123');
   });
 
-  await t.test('dropped tasks are not executed', () => {
+  await t.test('cleared tasks are not executed', () => {
     let message = '';
 
     new Task(() => {

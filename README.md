@@ -9,9 +9,10 @@ export class Calculator {
   readonly num1State = new State(100);
   readonly num2State = new State(200);
   readonly sumState = new State(0);
-  readonly sumEffect = new Effect([num1State, num2State]);
 
   constructor() {
+    const sumEffect = new Effect([num1State, num2State]);
+
     sumEffect.listen(() => {
       this.sumState.value = new LazyValue(() => num1State.value + num2State.value);
     });
@@ -69,7 +70,7 @@ import { Event } from 'event-ops';
 
 const clickEvent = new Event<[number, number]>();
 
-const dropClickListener = clickEvent.listen(([x, y]) => {
+const clearClickListener = clickEvent.listen(([x, y]) => {
   console.log(`Click coord: ${x},${y}`);
 });
 
@@ -77,11 +78,11 @@ clickEvent.emit([100, 150]);
 
 // ... some time later ...
 
-dropClickListener();
+clearClickListener();
 
 // OR
 
-clickEvent.drop(clickListener);
+clickEvent.unlisten(clickListener);
 ```
 
 ### core/State
@@ -93,7 +94,7 @@ import { State } from 'event-ops';
 
 const colorState = new State('red');
 
-const dropColorListener = colorState.listen((optionalStateRef) => {
+const clearColorListener = colorState.listen((optionalStateRef) => {
   console.log(`Color changed to ${colorState.value}`)
 });
 
@@ -101,11 +102,11 @@ colorState.value = 'green';
 
 // ... some time later ...
 
-dropColorListener();
+clearColorListener();
 
 // OR
 
-colorState.drop(colorListener);
+colorState.unlisten(colorListener);
 ```
 
 You can also force a State change using a Value object:
@@ -134,7 +135,7 @@ const num1State = new State(0);
 const num2State = new State(0);
 const sumEffect = new Effect([num1State, num2State]);
 
-const dropSumListener = sumEffect.listen(() => {
+const clearSumListener = sumEffect.listen(() => {
   console.log(`New sum is ${num1State.value + num2State.value}`);
 });
 
@@ -143,11 +144,11 @@ num2State.value = 200;
 
 // ... some time later ...
 
-dropSumListener();
+clearSumListener();
 
 // OR
 
-sumEffect.drop(sumListener);
+sumEffect.unlisten(sumListener);
 ```
 
 ### core/Task
@@ -172,22 +173,22 @@ new Task(() => {
 }).schedule();
 ```
 
-If some time later you would like to drop a scheduled Task, you can do so with the `drop()` method. This would only be relevant if the Task has not been run yet.
+If some time later you would like to clear a scheduled Task, you can do so with the `unschedule()` method. This would only be relevant if the Task has not been run yet.
 
 ```ts
 const task = new Task(() => {
   // perform task
 });
 
-const dropTask = task.schedule();
+const clearTask = task.schedule();
 
 // ... some time later ...
 
-dropTask();
+clearTask();
 
 // OR
 
-task.drop();
+task.unschedule();
 ```
 
 ### core/Value
@@ -226,7 +227,7 @@ console.log(state.value);
 
 ### react/useListener
 
-With `useListener()` you can add a listener to an Event and bind it to the lifetime of the component, meaning that once the component is unmounted, the listener will be automatically dropped.
+With `useListener()` you can add a listener to an Event and bind it to the lifetime of the component, meaning that once the component is unmounted, the listener will be automatically cleared.
 
 ```tsx
 import { Event } from 'event-ops';

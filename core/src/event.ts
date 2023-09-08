@@ -1,5 +1,6 @@
-import { IListen, Listener, ListenerDropFn } from './listener';
+import { IListen, Listener } from './listener';
 import { Task } from './task';
+import { ClearFn } from './utils';
 
 export class Event<T = void> implements IListen<T> {
   private readonly tasks = new Map<Listener<T>, Task<T>>();
@@ -13,27 +14,27 @@ export class Event<T = void> implements IListen<T> {
     });
   }
 
-  listen(listener: Listener<T>): ListenerDropFn {
+  listen(listener: Listener<T>): ClearFn {
     if (!this.tasks.has(listener)) {
       const task = new Task(listener);
       this.tasks.set(listener, task);
     }
 
     return () => {
-      this.drop(listener);
+      this.unlisten(listener);
     };
   }
 
-  drop(listener: Listener<T>) {
+  unlisten(listener: Listener<T>) {
     const task = this.tasks.get(listener);
     if (!task) return;
 
     this.tasks.delete(listener);
-    task.drop();
+    task.unlisten();
   }
 }
 
 export const voidEvent = new Event<void>();
 Reflect.set(voidEvent, 'emit', function emit() {});
 Reflect.set(voidEvent, 'listen', function listen() {});
-Reflect.set(voidEvent, 'drop', function drop() {});
+Reflect.set(voidEvent, 'unlisten', function unlisten() {});

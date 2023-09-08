@@ -1,0 +1,1 @@
+export type ClearFn = () => void;
