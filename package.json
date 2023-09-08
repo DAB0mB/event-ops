@@ -1,7 +1,7 @@
 {
   "name": "event-ops",
   "description": "Event Ops (Event Operations) is a library that provides very simple and minimalistic utils to create event-driven programs.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "core/build",
   "files": [
     "core/package.json",
