@@ -1,6 +1,12 @@
-import { IListen, Listener } from './listener';
 import { Task } from './task';
 import { ClearFn } from './utils';
+
+export type Listener<T = void> = (value: T) => void;
+
+export interface IListen<T> {
+  listen(listener: Listener<T>): ClearFn;
+  unlisten(listener: Listener<T>): void;
+}
 
 export class Event<T = void> implements IListen<T> {
   private readonly tasks = new Map<Listener<T>, Task<T>>();
@@ -30,7 +36,7 @@ export class Event<T = void> implements IListen<T> {
     if (!task) return;
 
     this.tasks.delete(listener);
-    task.unlisten();
+    task.unschedule();
   }
 }
 

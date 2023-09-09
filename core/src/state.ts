@@ -1,6 +1,6 @@
-import { Event } from './event';
-import { IListen, Listener } from './listener';
-import { IValue, LazyValue, Value, getLazyValue, getValue, kValue } from './value';
+import { Event, IListen, Listener } from './event';
+import { LazyValue, getLazyValue } from './lazy_value';
+import { IValue, Value, getValue, kValue } from './value';
 
 export class State<T> implements IListen<T>, IValue<T> {
   private valueCache?: T;

@@ -12,15 +12,6 @@ export class Value<T> implements IValue<T> {
   }
 }
 
-export class LazyValue<T> {
-  constructor(readonly get: () => T) {
-  }
-}
-
 export function getValue<T>(value: IValue<T> | T) {
   return value != null && typeof value == 'object' && kValue in value ? value[kValue] : value as T;
-}
-
-export function getLazyValue<T>(value: IValue<T> | T) {
-  return value instanceof LazyValue ? value.get() : value;
 }

@@ -1,5 +1,4 @@
-import { Event } from './event';
-import { IListen, Listener } from './listener';
+import { Event, IListen, Listener } from './event';
 import { ClearFn } from './utils';
 
 export class Effect implements IListen<void> {
