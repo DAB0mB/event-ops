@@ -57,8 +57,11 @@ npm install event-ops
   - [Effect](#coreeffect)
   - [Task](#coretask)
   - [Value](#corevalue)
+  - [LazyValue](#corelazyvalue)
+  - [EmitterEvent](#coreemitterevent)
 - react
   - [useListener](#reactuselistener)
+  - [useEmitterListener](#reactuseemitterlistener)
   - [useValue](#reactusevalue)
 
 ### core/Event
@@ -83,6 +86,24 @@ clearClickListener();
 // OR
 
 clickEvent.unlisten(clickListener);
+```
+
+### core/EmitterEvent
+
+In case you have an existing emitter, let's say a web socket, you can construct an event that's bound to a key using the EmitterEvent object. This is particularly useful if the instance of the emitter can vary, but the event key and value remain the same, e.g. if you have multiple web socket clients that subscribe to the same event.
+
+```ts
+import { EmitterEvent } from 'event-ops';
+
+const pingEvent = new EmitterEvent('ping');
+const pongEvent = new EmitterEvent<number>('pong');
+
+wsServer.on('connection', (wsClient) => {
+  pingEvent.listen(wsClient, () => {
+    const ts = Date.now();
+    pongEvent.emit(wsClient, ts);
+  });
+});
 ```
 
 ### core/State
@@ -207,6 +228,8 @@ state.listen(() => {
 state.value = new Value(1);
 ```
 
+### core/LazyValue
+
 Some listeners may include heavy computations, in which case you can use a LazyValue object to compute a value only once at runtime. If you reset the State value with a new LazyValue object, the cache of the underlying value would be invalidated and the computation would rerun the next time the LazyValue is consumed:
 
 ```ts
@@ -279,6 +302,32 @@ function Component(props: Props) {
   useListener(props.event ?? voidEvent, update);
 
   return null;
+}
+```
+
+### react/useEmitterListener
+
+The `useEmitterListener()` hook is similar to `useListener()`, only it's based on [EmitterEvent](#coreemitterevent).
+
+```tsx
+import { useEmitterListener } from 'event-ops/react';
+
+const pingEvent = new EmitterEvent('ping');
+const pongEvent = new EmitterEvent<number>('pong');
+
+function Component() {
+  const socket = useSocket();
+  const [ts, setTs] = useState(0);
+
+  useEmitterListener(pongEvent, socket, (ts) => {
+    setTs(ts);
+  });
+
+  return (
+    <div>
+      timestamp: {ts}
+    </div>
+  );
 }
 ```
 

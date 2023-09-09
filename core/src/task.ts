@@ -24,11 +24,11 @@ export class Task<T = void> {
     this.run();
 
     return () => {
-      this.unlisten();
+      this.unschedule();
     };
   }
 
-  unlisten() {
+  unschedule() {
     if (this.index == null) return;
 
     tasks.delete(this.index);
@@ -43,7 +43,7 @@ export class Task<T = void> {
       this.callback(this.value);
     }
     finally {
-      this.unlisten();
+      this.unschedule();
       getNextTask()?.run();
     }
   }

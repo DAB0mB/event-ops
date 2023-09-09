@@ -1,8 +1,9 @@
-import { Event, State } from 'event-ops';
+import { EmitterEvent, Event, State } from 'event-ops';
 import { equal } from 'node:assert';
+import { EventEmitter } from 'node:events';
 import test from 'node:test';
 import * as TestRenderer from 'react-test-renderer';
-import { useListener, useUpdate, useValue } from '../src';
+import { useEmitterListener, useListener, useUpdate, useValue } from '../src';
 
 test('useUpdate()', async (t) => {
   await t.test('tirggers component update', async () => {
@@ -83,6 +84,69 @@ test('useListener()', async (t) => {
     await unmounting;
 
     event.emit();
+
+    const updating = new Promise(resolve => setTimeout(resolve));
+    await updating;
+
+    equal(updateCount, 1);
+  });
+});
+
+test('useEmitterListener()', async (t) => {
+  await t.test('tirggers listener on emit()', async () => {
+    const emitter = new EventEmitter();
+    const event = new EmitterEvent<string>('test');
+    let updateCount = 0;
+
+    const TestComponent = () => {
+      const update = useUpdate();
+
+      useEmitterListener(event, emitter, (value) => {
+        equal(value, 'test');
+        update();
+      });
+
+      updateCount++;
+
+      return null;
+    };
+
+    TestRenderer.create(<TestComponent />);
+
+    const mounting = new Promise(resolve => setTimeout(resolve));
+    await mounting;
+
+    event.emit(emitter, 'test');
+
+    const updating = new Promise(resolve => setTimeout(resolve));
+    await updating;
+
+    equal(updateCount, 2);
+  });
+
+  await t.test('listener is cleared on unmount', async () => {
+    const emitter = new EventEmitter();
+    const event = new EmitterEvent<void>('test');
+    let updateCount = 0;
+
+    const TestComponent = () => {
+      useEmitterListener(event, emitter, useUpdate());
+      updateCount++;
+
+      return null;
+    };
+
+    const renderer = TestRenderer.create(<TestComponent />);
+
+    const mounting = new Promise(resolve => setTimeout(resolve));
+    await mounting;
+
+    renderer.unmount();
+
+    const unmounting = new Promise(resolve => setTimeout(resolve));
+    await unmounting;
+
+    event.emit(emitter);
 
     const updating = new Promise(resolve => setTimeout(resolve));
     await updating;
