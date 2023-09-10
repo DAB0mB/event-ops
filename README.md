@@ -6,12 +6,12 @@ Event Ops (Event Operations) is a library that provides very simple and minimali
 import { Memo, State } from 'event-ops';
 
 export class Calculator {
-  readonly num1State = new State(100);
-  readonly num2State = new State(200);
+  readonly num1 = new State(100);
+  readonly num2 = new State(200);
 
-  readonly sumState = new Memo(() => {
-    return num1State.value + num2State.value;
-  }, [this.num1State, this.num2State]);
+  readonly sum = new Memo(() => {
+    return num1.value + num2.value;
+  }, [this.num1, this.num2]);
 }
 ```
 
@@ -177,7 +177,7 @@ const num1 = new State(0);
 const num2 = new State(0);
 
 const sum = new Memo(() => {
-  return num1.value = num2.value;
+  return num1.value + num2.value;
 }, [num1, num2]);
 
 // Which is equivalent to
@@ -187,7 +187,7 @@ const num2 = new State(0);
 const sum = new State(0);
 
 const effect = new Effect(() => {
-  sum.value = new LazyValue(() => num1.value = num2.value);
+  sum.value = new LazyValue(() => num1.value + num2.value);
 }, [num1, num2]);
 
 effect.emit();
