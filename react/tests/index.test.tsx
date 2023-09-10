@@ -1,4 +1,4 @@
-import { EmitterEvent, Event, State } from 'event-ops';
+import { EmitterEvent, Event, Memo, State, scheduleTask } from 'event-ops';
 import { equal } from 'node:assert';
 import { EventEmitter } from 'node:events';
 import test from 'node:test';
@@ -195,5 +195,35 @@ test('useValue()', async (t) => {
     await updating;
 
     equal(value!, 2);
+  });
+
+  await t.test('works with memo', async () => {
+    const num1 = new State(0);
+    const num2 = new State(0);
+    const sum = new Memo(() => {
+      return num1.value + num2.value;
+    }, [num1, num2]);
+    let value = 0;
+
+    const TestComponent = () => {
+      value = useValue(sum);
+
+      return null;
+    };
+
+    TestRenderer.create(<TestComponent />);
+
+    const mounting = new Promise(resolve => setTimeout(resolve));
+    await mounting;
+
+    scheduleTask(() => {
+      num1.value = 100;
+      num2.value = 200;
+    });
+
+    const updating = new Promise(resolve => setTimeout(resolve));
+    await updating;
+
+    equal(value, 300);
   });
 });

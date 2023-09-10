@@ -1,5 +1,6 @@
+export type LazyGetter<T> = () => T;
 export class LazyValue<T> {
-  constructor(readonly get: () => T) {
+  constructor(readonly get: LazyGetter<T>) {
   }
 }
 

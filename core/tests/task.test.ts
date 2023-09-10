@@ -1,19 +1,19 @@
 import { equal } from 'node:assert';
-import { Task } from '../src';
 import test from 'node:test';
+import { Task, scheduleTask } from '../src';
 
 test('Task', async (t) => {
   await t.test('scheduled tasks are executed based on their order', () => {
     let message = '';
 
     new Task(() => {
-      new Task(() => {
+      scheduleTask(() => {
         message += '2';
-      }).schedule();
+      });
 
-      new Task(() => {
+      scheduleTask(() => {
         message += '3';
-      }).schedule();
+      });
 
       message += '1';
     }).schedule();

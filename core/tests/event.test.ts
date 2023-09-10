@@ -1,6 +1,6 @@
 import { equal } from 'node:assert';
 import { test } from 'node:test';
-import { Event, Task } from '../src';
+import { Event, Task, scheduleTask } from '../src';
 
 test('Event', async (t) => {
   await t.test('emit() triggers listeners', async () => {
@@ -55,11 +55,11 @@ test('Event', async (t) => {
     event.listen(() => callCount++);
     event.listen(() => callCount++);
 
-    new Task(() => {
+    scheduleTask(() => {
       event.emit();
       event.emit();
       event.emit();
-    }).schedule();
+    });
 
     equal(callCount, 3);
   });
@@ -72,7 +72,7 @@ test('Event', async (t) => {
     const clear2 = event.listen(() => callCount++);
     event.listen(() => callCount++);
 
-    new Task(() => {
+    scheduleTask(() => {
       clear1();
 
       event.emit();
@@ -80,7 +80,7 @@ test('Event', async (t) => {
       event.emit();
 
       clear2();
-    }).schedule();
+    });
 
     equal(callCount, 1);
   });

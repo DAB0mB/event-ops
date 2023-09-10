@@ -49,6 +49,10 @@ export class Task<T = void> {
   }
 }
 
+export function scheduleTask(callback: TaskCallback) {
+  return new Task(callback).schedule();
+}
+
 function getNextTask() {
   if (!tasks.size) return;
 

@@ -1,5 +1,6 @@
 import { Event, IListen, Listener } from './event';
 import { LazyValue, getLazyValue } from './lazy_value';
+import { ClearFn } from './utils';
 import { IValue, Value, getValue, kValue } from './value';
 
 export class State<T> implements IListen<T>, IValue<T> {
@@ -37,10 +38,14 @@ export class State<T> implements IListen<T>, IValue<T> {
     return this.value?.toString();
   }
 
-  listen(listener: Listener<T>) {
+  listen(listener: Listener<T>): ClearFn {
     this.listenersCount++;
 
-    return this.event.listen(listener);
+    this.event.listen(listener);
+
+    return () => {
+      this.unlisten(listener);
+    };
   }
 
   unlisten(listener: Listener<T>) {

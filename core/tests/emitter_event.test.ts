@@ -1,7 +1,7 @@
 import { equal } from 'node:assert';
 import { EventEmitter } from 'node:events';
 import test from 'node:test';
-import { EmitterEvent, Task } from '../src';
+import { EmitterEvent, Task, scheduleTask } from '../src';
 
 test('EmitterEvent', async (t) => {
   await t.test('EventEmitter.emit() triggers listeners', async () => {
@@ -107,11 +107,11 @@ test('EmitterEvent', async (t) => {
 
     event.listen(emitter, () => callCount++);
 
-    new Task(() => {
+    scheduleTask(() => {
       event.emit(emitter);
       event.emit(emitter);
       event.emit(emitter);
-    }).schedule();
+    });
 
     equal(callCount, 1);
   });

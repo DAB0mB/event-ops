@@ -3,22 +3,15 @@
 Event Ops (Event Operations) is a library that provides very simple and minimalistic utils to create event-driven programs. Event Ops was designed to work in any JavaScript environment and doesn't have any dependencies. With that said, it does provide additional helpers to work with React. Here's an example of how one can use Event Ops to write an event-driven controller:
 
 ```js
-import { Effect, LazyValue, State } from 'event-ops';
+import { Memo, State } from 'event-ops';
 
 export class Calculator {
   readonly num1State = new State(100);
   readonly num2State = new State(200);
-  readonly sumState = new State(0);
 
-  constructor() {
-    const sumEffect = new Effect([num1State, num2State]);
-
-    sumEffect.listen(() => {
-      this.sumState.value = new LazyValue(() => num1State.value + num2State.value);
-    });
-
-    sumEffect.emit();
-  }
+  readonly sumState = new Memo(() => {
+    return num1State.value + num2State.value;
+  }, [this.num1State, this.num2State]);
 }
 ```
 
@@ -53,12 +46,13 @@ npm install event-ops
 
 - core
   - [Event](#coreevent)
+  - [EmitterEvent](#coreemitterevent)
   - [State](#corestate)
   - [Effect](#coreeffect)
+  - [Memo](#corememo)
   - [Task](#coretask)
   - [Value](#corevalue)
   - [LazyValue](#corelazyvalue)
-  - [EmitterEvent](#coreemitterevent)
 - react
   - [useListener](#reactuselistener)
   - [useEmitterListener](#reactuseemitterlistener)
@@ -172,6 +166,45 @@ clearSumListener();
 sumEffect.unlisten(sumListener);
 ```
 
+### core/Memo
+
+Memo provides an alternative to a LazyValue assignment in an Effect listener.
+
+```ts
+import { State, Memo } from 'event-ops';
+
+const num1 = new State(0);
+const num2 = new State(0);
+
+const sum = new Memo(() => {
+  return num1.value = num2.value;
+}, [num1, num2]);
+
+// Which is equivalent to
+
+const num1 = new State(0);
+const num2 = new State(0);
+const sum = new State(0);
+
+const effect = new Effect(() => {
+  sum.value = new LazyValue(() => num1.value = num2.value);
+}, [num1, num2]);
+
+effect.emit();
+```
+
+You can stop listening to the underlying Memo Effect by calling the `clearEffectListener()` method.
+
+```ts
+const sum = new Memo(() => {
+  return num1.value = num2.value;
+}, [num1, num2]);
+
+// ... some time later ...
+
+sum.clearEffectListener();
+```
+
 ### core/Task
 
 All listeners are scheduled to run using a Task system to prevent redundant computations. To tap into the Task system, you can use the Task object.
@@ -210,6 +243,16 @@ clearTask();
 // OR
 
 task.unschedule();
+```
+
+You can also use the `scheduleTask()` util to create a task and schedule it immediately.
+
+```ts
+import { scheduleTask } from 'event-ops';
+
+const clearTask = scheduleTask(() => {
+  // perform task
+});
 ```
 
 ### core/Value
