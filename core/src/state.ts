@@ -39,9 +39,10 @@ export class State<T> implements IListen<T>, IValue<T> {
   }
 
   listen(listener: Listener<T>): ClearFn {
-    this.listenersCount++;
-
-    this.event.listen(listener);
+    if (!this.event.has(listener)) {
+      this.listenersCount++;
+      this.event.listen(listener);
+    }
 
     return () => {
       this.unlisten(listener);
@@ -49,9 +50,10 @@ export class State<T> implements IListen<T>, IValue<T> {
   }
 
   unlisten(listener: Listener<T>) {
-    this.listenersCount--;
-
-    this.event.unlisten(listener);
+    if (this.event.has(listener)) {
+      this.listenersCount--;
+      this.event.unlisten(listener);
+    }
   }
 
   emit() {

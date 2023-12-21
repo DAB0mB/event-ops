@@ -38,6 +38,10 @@ export class Event<T = void> implements IListen<T> {
     this.tasks.delete(listener);
     task.unschedule();
   }
+
+  has(listener: Listener<T>) {
+    return this.tasks.has(listener);
+  }
 }
 
 export const voidEvent = new Event<void>();

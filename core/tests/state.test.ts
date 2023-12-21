@@ -100,4 +100,22 @@ test('State', async (t) => {
     equal(sumState.value, 200);
     equal(callCount, 2);
   });
+
+  await t.test('clearing a non-existent listener does not prevent state emition', async () => {
+    const state = new State(1);
+
+    state.listen((value) => {
+      equal(value, state.value);
+      equal(state.value, 2);
+    });
+
+    const clear = state.listen(() => {/* noop */});
+    clear();
+    clear();
+    clear();
+
+    state.value = 2;
+
+    equal(state.value, 2);
+  });
 });
